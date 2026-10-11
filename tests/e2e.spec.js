@@ -216,6 +216,30 @@ test.describe('demo mode (no backend)', () => {
     await expect(page.getByText('Agent worktrees need a backend')).toBeVisible();
   });
 
+  test('WebGL budget: at most 12 live contexts; every shown terminal keeps the GPU renderer across a project switch', async ({ page, browserName }) => {
+    await page.addInitScript(() => {                    // count every WebGL context the page creates
+      const get = HTMLCanvasElement.prototype.getContext; window.__gl = [];
+      HTMLCanvasElement.prototype.getContext = function (type, ...a) { const c = get.call(this, type, ...a); if (/webgl/.test(type) && c && !window.__gl.includes(c)) window.__gl.push(c); return c; };
+    });
+    const warnings = []; page.on('console', (m) => { if (/webgl|context ?lost/i.test(m.text())) warnings.push(m.text()); });
+    await boot(page, '/?demo');
+    const GPU = '.xterm-screen > canvas:not([class*="-layer"])';   // the WebGL renderer's canvas (its 2D layers are *-layer)
+    const gpu = await page.waitForSelector(GPU, { timeout: 3000 }).then(() => true, () => false);
+    test.skip(!gpu, 'no WebGL renderer in this browser');
+    const newTerm = async () => { const n = await page.locator('.xterm').count(); await page.locator('#new').click(); await expect(page.locator('.xterm')).toHaveCount(n + 1); };
+    for (let i = 1; i < 12; i++) await newTerm();        // project 1: 12 terminals (the per-project maximum)
+    await page.locator('#padd').click();
+    for (let i = 0; i < 8; i++) await newTerm();         // project 2: 8 more — 20 in all, past Chrome's ~16 contexts
+    await page.locator('.ptab').first().click();
+    const shownOnGpu = () => page.evaluate((sel) => [...document.querySelectorAll('.win')].filter((w) => w.style.display !== 'none')
+      .map((w) => { const c = w.querySelector(sel); return !!c && !c.getContext('webgl2').isContextLost(); }), GPU);
+    // WebKit keeps counting released contexts until they are garbage-collected, so it may still drop a few on the
+    // switch back; those terminals must get WebGL again (xterm waits ~3 s for a restore, then the 2 s retry).
+    await expect.poll(shownOnGpu, { timeout: 15000 }).toEqual(Array(12).fill(true));
+    expect(await page.evaluate(() => window.__gl.filter((g) => !g.isContextLost()).length)).toBeLessThanOrEqual(12);
+    if (browserName === 'chromium') expect(warnings).toEqual([]);   // Chrome frees a released context at once
+  });
+
   test('two terminals: tile, close one, layout survives reload', async ({ page }) => {
     await boot(page, '/?demo');
     await page.locator('#new').click();
