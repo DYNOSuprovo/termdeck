@@ -361,7 +361,10 @@ Legend: 🖥️ frontend (`public/index.html` + `app.js` + `app.css`) · 🔌 ba
   tab across all projects (grouped by project): the tab's last ~9 output lines plus its state (needs approval /
   waiting / running / idle / exited; dot and border tinted). Tiles are **sorted by urgency** within each project (needs approval → waiting → working → running → idle → exited; window order kept inside a state) and the border/dot is colour-coded (red / amber / teal). An **All | Active** filter beside the view toggle hides idle and exited sessions (*Active · N* shows the count); with no saved choice it defaults to Active while anything is running and to All otherwise, and an explicit pick is remembered in browser storage. With *Active* and nothing running it says so instead of showing an empty grid. Refreshes every 1.5 s **only while open** (timer
   stops on close); output is rendered as text, no input. Click a tile (or Enter) to jump to that window and
-  tab; Esc or ✕ closes; **Queue** in its header switches back to the agent queue. Reads the already-streamed xterm buffer — no extra endpoint or WebSocket.
+  tab; Esc, ✕ or a click on the backdrop closes; **Queue** in its header switches back to the agent queue. Reads the already-streamed xterm buffer — no extra endpoint or WebSocket.
+  The grid sits on a theme-coloured sheet (header with *Queue | Grid* left, *Show All | Active* and ✕ right; a
+  footer with the hints), so its text keeps the theme's contrast on light themes too. Tiles show the state as a
+  tinted pill, lift on hover with an *Open ↵* hint, take a visible keyboard focus ring, and open with Enter or Space.
 - 🖥️ **Cross-project agent queue** — the toolbar **Sessions** button (⋯ overflow menu below 1260px) opens a popover
   (its *Queue* view; **Grid** switches to the Live overview — one home for both)
   listing **every agent tab across all projects** in one who-needs-me queue, ranked
@@ -369,7 +372,9 @@ Legend: 🖥️ frontend (`public/index.html` + `app.js` + `app.css`) · 🔌 ba
   Clicking a row jumps straight to it: switches project, reveals the window, focuses the tab, closes the
   popover. The button's badge mirrors the highest-priority state in the queue (**red** approval beats
   **amber** waiting beats working), and its tooltip carries the count, so the whole fleet collapses to one
-  glanceable control. Empty state reads *"No active agents / All quiet"*.
+  glanceable control. Empty state reads *"No active agents / Agents you start show up here"* with a
+  **Start an agent…** button (shows the palette shortcut) that closes the popover and opens the command palette
+  on its **Agents** tab — AI CLI presets and *New agent task…* — so nothing launches until you pick one there.
 - 🖥️🔌 **Approve / Deny from the queue (#44, phase 1)** — with agent hooks installed, an approval row in the
   agent queue shows the **exact request** (tool + command or file) and **Approve / Deny** buttons. Not
   keystroke injection: the CLI's `PermissionRequest` hook is held open by `scripts/td-hook.js` until you click,
