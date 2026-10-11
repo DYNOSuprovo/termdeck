@@ -3,6 +3,7 @@
 User-facing changes per release, newest first. Shown in the app under Help → What's new.
 
 ## 1.26.0
+- **Terminal library updated to xterm.js 6** — scrolling, the thin scrollbar and window snapping work as before; the scrollbar now fades out when idle and never covers the last text column. **Option/Alt+←/→ still jumps a word** (xterm.js 6 stopped doing this itself, so termdeck now does). In find, the current match shows in the selection colour.
 - **Fixed: keystrokes jumping back into a terminal** — opening the command palette (or a dialog) right as a window took focus could close it again and send what you typed, including Enter, to the shell. A late focus no longer takes over when focus has moved elsewhere.
 - **`localhost` and `127.0.0.1` are one address** — opening termdeck as `localhost` now takes you to `127.0.0.1`, so you sign in once for both and the "already open in another tab" check works across them.
 - **Needs Node.js 20 or newer** — on Linux it already did (the terminal library termdeck installs there requires Node 20); the stated minimum now says so, and CI tests Node 20, 22 and 24 on Linux, plus macOS and (best-effort) Windows. Firefox and Safari's engine (WebKit) are now tested alongside Chrome.
