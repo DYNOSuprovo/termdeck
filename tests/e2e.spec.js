@@ -28,6 +28,21 @@ const treeMenu = async (page, label) => { await page.locator('#sb-more-btn').cli
 const openPalette = async (page) => { await page.keyboard.press('ControlOrMeta+k'); await expect(palette(page)).toHaveClass(/open/); };
 
 test.describe('demo mode (no backend)', () => {
+  test('window clocks: one shared tick; a minimized window pauses and catches up when restored', async ({ page }) => {
+    await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') });
+    await page.clock.pauseAt(new Date('2026-01-01T00:00:01Z'));        // paused before the app starts: its start time and its 1 s tick are pinned
+    await boot(page, '/?demo');
+    const up = page.locator('.win .uptime').first();
+    await page.clock.runFor(3000);
+    await expect(up).toHaveText('00:03');
+    await page.locator('.win .wbtn[title="Minimize"]').first().click();
+    await page.clock.runFor(5000);
+    expect(await up.textContent()).toBe('00:03');                       // hidden: not touched
+    await page.locator('.chip').first().click();                        // restore from the dock
+    await page.clock.runFor(1000);
+    await expect(up).toHaveText('00:09');
+  });
+
   test('loads with no console errors', async ({ page }) => {
     const errors = await boot(page, '/?demo');
     await page.waitForTimeout(500);
