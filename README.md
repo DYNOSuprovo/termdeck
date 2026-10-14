@@ -31,6 +31,12 @@ npx @kiril6/termdeck
 
 Needs **Node.js 20+**. It opens **http://127.0.0.1:3000** in your browser (`localhost:3000` redirects there). Optional: install **tmux** (a terminal session manager that keeps shells alive across restarts; `brew install tmux` / `sudo apt install tmux`) so shells survive a server restart. Other ways to install are [below](#install-and-run).
 
+> **Install as a desktop app (PWA):** In Chrome, Edge, or Safari, click the install icon in the address bar (or browser menu → *Install TermDeck…*) to run it in its own standalone window without browser tabs or address bar chrome. Because an installed PWA's origin and `localStorage` are bound to `http://127.0.0.1:<port>`, pin a fixed port so the installed app always targets a stable origin:
+> ```bash
+> PORT=3000 npx @kiril6/termdeck
+> ```
+> *(An explicit `PORT` fails loudly on a clash rather than silently walking to another port. If the app ever lands on a new origin, palette `⌘K` → *Export settings…* / *Import settings…* and *Save layout as…* / *Restore layout…* bring your setup and layout right back).*
+
 ---
 
 ## Why termdeck

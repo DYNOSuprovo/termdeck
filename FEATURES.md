@@ -558,6 +558,7 @@ Legend: 🖥️ frontend (`public/index.html` + `js/` + `app.css`) · 🔌 backe
   toolbar/sidebar/overlays. Toggle the whole feature with **`⌘⌥P`** or palette → *Toggle pixel
   pets* (paw icon); enabled by default, state saved to `localStorage` (`td.pets.v1`). Fully hidden
   under `prefers-reduced-motion`.
+- 🖥️ **Web App Manifest & PWA installable (#1)** — `public/manifest.webmanifest` links 192px and 512px app icons (`theme_color: #0e151d`, `display: standalone`). In Chromium and WebKit browsers (Chrome, Edge, Safari, Arc), termdeck can be installed as a standalone desktop app (its own window with no browser tabs, address bar, or navigation chrome). Uses relative `start_url` and `scope` (`./`) so it works on any port, remote tunnel, or the static hosted demo (`docs/app/`).
 - 🖥️ **Help / About** — the **? Help** button (and `?`) opens an overlay: a one-paragraph "what is
   this" intro at the top, then the full keyboard-shortcut reference. The empty desktop also shows a
   *What is this?* link that opens the same overlay, so a first-timer has an entry point. The intro
