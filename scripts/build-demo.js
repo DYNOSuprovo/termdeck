@@ -34,9 +34,7 @@ for (const f of appFiles) {
 const extraPublicAssets = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 for (const f of extraPublicAssets) {
   const src = path.join(root, 'public', f);
-  if (fs.existsSync(src)) {
-    fs.copyFileSync(src, path.join(outDir, f));
-  }
+  fs.copyFileSync(src, path.join(outDir, f));
 }
 
 for (const rel of assets) {
