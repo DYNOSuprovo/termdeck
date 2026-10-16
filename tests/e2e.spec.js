@@ -543,7 +543,8 @@ test('hosted demo copy matches a fresh npm run build:demo', () => {
 });
 
 test.describe('live backend', () => {
-  test('PWA manifest loads with the sign-in cookie and the app is installable (#1)', async ({ page }) => {
+  test('PWA manifest loads with the sign-in cookie and the app is installable (#1)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'CDP (getAppManifest) is Chromium-only');
     await boot(page, '/');
     const cdp = await page.context().newCDPSession(page);
     const { data, errors } = await cdp.send('Page.getAppManifest');
